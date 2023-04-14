@@ -1,0 +1,106 @@
+
+<html>
+	  <head>
+		<meta charset="UTF-8">
+		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+		<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI=" crossorigin=""/>
+		<link rel="stylesheet" href="leaflet.css"/>
+		<script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js" integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
+		<script src = "jquery-3.6.3.js"></script>
+		     
+		<div class="container">
+			<header class="d-flex justify-content-center py-3">
+			  <ul class="nav nav-pills">
+				<li class="nav-item">
+					<a href="accueil.html" class="nav-link active" aria-current="page">accueil</a>
+				</li>
+				<li class="nav-item">
+					<a id="inscription"href="inscription.html" class="nav-link">inscription</a>
+				</li>
+				<li class="nav-item">
+				  <a id="connexion" href="connexion.html" class="nav-link">connexion</a>
+				</li>
+				<li class="nav-item">
+					<a id="profil" href="profil.html" class="nav-link">profil</a>
+				</li>
+				<li class="nav-item">
+                    <a id="deconnexion"href="deconnexion.html" class="nav-link" > deconnexion</a>
+                  </li>
+			  </ul>
+			  </header>
+		  </div>
+	    <title>aa</title>
+	  </head>
+	  	<body>
+			
+	  		<div id="map"></div>
+			
+		     <script>
+				$(document).ready(function() {
+			})
+				var map = L.map('map').setView([48.832821300000, 2.263503182000], 15);
+		     	L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+					maxZoom: 19,
+					attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+				}).addTo(map);
+				var json = "medecins-generalistes-et-infirmiers.json";
+				$.ajax({
+					method: "GET", 
+					url:"medecins-generalistes-et-infirmiers.json"
+				})
+				.done(function(data, textStatus, jqXHR) {
+					function getCookie() {
+						var letoken = document.cookie.split("=");
+						letoken = letoken[1];
+						return letoken;
+					}
+					var token = getCookie("token");
+					console.log(token);
+					if(token){
+						document.getElementById("connexion").style.display = "none";
+						document.getElementById("inscription").style.display = "none";
+						
+					}
+					else{
+						console.log("oui");
+						document.getElementById("deconnexion").style.display = "none";
+						document.getElementById("profil").style.display = "none";
+						document.getElementById("connexion").style.display = "block";
+						document.getElementById("inscription").style.display = "";
+					}
+					console.log(data);
+					console.log(textStatus);
+					console.log(jqXHR);
+					for(var i = 0; i < data.length; i++) {
+						
+						var id =data[i].recordid;
+						if(data[i].fields.specialite == 'MEDECIN GENERALISTE'){
+							
+
+							L.marker(data[i].fields.geolocalisation).addTo(map) 
+								.bindPopup(data[i].fields.nom + " " + data[i].fields.prenom + "<br>" + data[i].fields.adresse + "<br><a href='priseRDV.html?id="+id +"'>Rdv</a>")
+								.openPopup();
+						}
+						
+					}
+					
+					//boutton du marker 
+					
+				});
+				
+		 	</script>
+			
+			<div class="col-md-10 mx-auto col-lg-7">
+		    <form class="p-4 p-md-5 border rounded-3 bg-light" action="inscription.html">
+				<button class="w-100 btn btn-lg btn-primary" type="submit">Incription</button>
+			</form>
+			<form class="p-4 p-md-5 border rounded-3 bg-light" action="connexion.html">
+				<button class="w-100 btn btn-lg btn-primary" type="submit">Connexion</button>
+			</form>
+			<form class="p-4 p-md-5 border rounded-3 bg-light" action="profil.html">
+				<button class="w-100 btn btn-lg btn-primary" type="submit">Profil</button>
+			</form>
+			</div>
+	 	</body>
+  
+</html>
